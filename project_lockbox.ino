@@ -4,8 +4,8 @@
 #define RED_PIN 4 //this is the pin for the red LED
 
 int red = 4;
-int green = 3;
-int blue = 2;
+int green = 2;
+int yellow = 3;
 
 
 //ultrasonic sensor library
@@ -17,7 +17,7 @@ int blue = 2;
 #include <Servo.h>
 #define MICHAEL_PIN A5 //this is the pin that connects to servo motor
 
-
+Servo michael;
 
 
 
@@ -34,6 +34,7 @@ void setup() {
 
 
 // servo motor setup code
+  michael.write(0);
   michael.attach(MICHAEL_PIN); //connecting the servo object to the pin
 
 
@@ -75,19 +76,13 @@ void loop() {
     digitalWrite(RED_PIN, LOW); //only green LED on here
     delay(200);
 
-    //servo motor moves slightly to start opening up the lock
-    michael.write(100); //start of motor extension at 0 degrees
-    michael.write(180); //continuous full rotations until told otherwise
-    delay(1000); //wait 1 seconds, because 1000 equates to 1 second
-    michael.write(100); //start of motor extension at 0 degrees
-    delay(1000); //wait 1 seconds, because 1000 equates to 1 second
-    michael.write(180); //continuous full rotations until told otherwise
-    delay(1000); //wait 1 seconds, because 1000 equates to 1 second
-
+    michael.write(0); //start of motor extension at 0 degrees
+    michael.write(-220); //continuous full rotations until told otherwise
+    delay(1500); //wait 0.75 seconds
     
   }
   
-  if(distance < 10 && distance > 5){
+  else if(distance < 10 && distance > 5){
     Serial.println("Getting close!"); //tells use that you can continue to move closer with caution
 
     digitalWrite(YELLOW_PIN, HIGH); //physical yellow LED will flash letting user know that they are getting closer and closer to the sensor
@@ -102,9 +97,14 @@ void loop() {
     digitalWrite(GREEN_PIN, LOW); //only yellow LED on here
     digitalWrite(RED_PIN, LOW); //only yellow LED on here
     delay(200);
+
+    //servo motor moves slightly to start opening up the lock
+    michael.write(100); //start of motor extension at 0 degrees
+    michael.write(180); //continuous full rotations until told otherwise
+    delay(750); //wait 0.75 seconds
   }
 
-  if(distance < 5){
+  else if(distance < 5){
     Serial.println("Ahh! Stop!");
 
     digitalWrite(RED_PIN, HIGH); //physical red LED will light up letting user know that they are extremely close to the sensor
@@ -119,6 +119,11 @@ void loop() {
     digitalWrite(GREEN_PIN, LOW); //only red LED on here
     digitalWrite(YELLOW_PIN, LOW); //only red LED on here
     delay(200);
+
+    //servo motor moves more to completely open up the lock
+    michael.write(180); //start of motor extension at 0 degrees
+    michael.write(260); //continuous full rotations until told otherwise
+    delay(750); //wait 0.75 seconds
   }
 
 
