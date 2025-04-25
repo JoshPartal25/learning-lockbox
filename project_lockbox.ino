@@ -2,10 +2,21 @@
 #define GREEN_PIN 2 //this is the pin for the green LED
 #define YELLOW_PIN 3 //this is the pin for the yellow LED
 #define RED_PIN 4 //this is the pin for the red LED
+#include <SoftwareSerial.h>
 
 int red = 4;
 int green = 2;
 int yellow = 3;
+
+
+//bluetooth library
+int const RX_PIN = 7; //this is the rx pin, which receives the bluetooth
+int const TX_PIN = 8; //this is the tx pin, which transmits the bluetooth
+
+SoftwareSerial tooth(TX_PIN, RX_PIN); //makes a bluetooth object
+//set tx and rx pins
+//tx goes first, then rx
+char davis;
 
 
 //ultrasonic sensor library
@@ -23,7 +34,10 @@ Servo michael;
 
 
 void setup() {
-  
+Serial.begin(9600);
+tooth.begin(9600);
+
+
 // put your setup code here, to run once:
  Serial.begin(9600);
   pinMode(TRIGGERPIN, OUTPUT); //send pulse
@@ -42,8 +56,18 @@ void setup() {
 }
 
 void loop() {
+
+  //bluetooh main code
+  //bluetooth#: 51568
+  if(tooth.available() >0){
+      davis = tooth.read();
+      tooth.print("reading new input: ");
+      tooth.println(davis);
+    }
   
-  // ultrasonic sensor main code
+  if(davis == 'unlock ultrasonic'){ //turns on ultrasonic sensor
+  
+    // ultrasonic sensor main code
   digitalWrite(TRIGGERPIN, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIGGERPIN, HIGH);
@@ -125,7 +149,6 @@ void loop() {
     michael.write(260); //continuous full rotations until told otherwise
     delay(750); //wait 0.75 seconds
   }
-
-
+  }
 
 }
